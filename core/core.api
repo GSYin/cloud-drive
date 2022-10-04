@@ -3,10 +3,97 @@ service core-api {
 	@handler UserLogin
 	post /user/login (LoginRequest) returns (LoginResponse)
 	
-	// user detial
-	@handler UserDetial
+	// user detail
+	@handler UserDetail
 	get /user/detail (UserDetailRequest) returns (UserDetailResponse)
+	
+	// mail code send
+	@handler MailCodeSendRegister
+	post /mail/code/send/register (MailCodeSendRequest) returns (MailCodeSendResponse)
+	
+	// user register
+	@handler UserRegister
+	post /user/register (UserRegisterRequest) returns (UserRegisterResponse)
+	
+	// get share file detail
+	@handler ShareFileDetail
+	get /share/file/detail (ShareFileDetailRequest) returns (ShareFileDetailResponse)
 }
+
+// add middleware
+@server(
+	middleware: Auth
+)
+service core-api {
+	// file upload
+	@handler FileUpload
+	post /file/upload (FileUploadRequest) returns (FileUploadResponse)
+	
+	// Associated storage of user files
+	@handler UserFileStorage
+	post /user/file/storage (UserFileStorageRequest) returns (UserFileStorageResponse)
+	
+	// user file list
+	@handler UserFileList
+	get /user/file/list (UserFileListRequest) returns (UserFileListResponse)
+	
+	// user file name update
+	@handler UserFileNameUpdate
+	post /user/file/name/update (UserFileNameUpdateRequest) returns (UserFileNameUpdateResponse)
+	
+	// user folder create
+	@handler UserFolderCreate
+	post /user/folder/create (UserFolderCreateRequest) returns (UserFolderCreateResponse)
+	
+	// user file delete
+	@handler UserFileDelete
+	delete /user/file/delete (UserFileDeleteRequest) returns (UserFileDeleteResponse)
+	
+	// user file move
+	@handler UserFileMove
+	put /user/file/move (UserFileMoveRequest) returns (UserFileMoveResponse)
+	
+	// share file create
+	@handler ShareFileCreate
+	post /share/file/create (ShareFileCreateRequest) returns (ShareFileCreateResponse)
+	
+	// shared files save
+	@handler SharedFilesSave
+	post /shared/files/save (SharedFilesSaveRequest) returns (SharedFilesSaveResponse)
+	
+	// refresh Authorization token
+	@handler RefreshAuthToken
+	post /refresh/token (RefreshAuthTokenRequest) returns (RefreshAuthTokenResponse)
+	
+	// file upload prepare
+	@handler FileUploadPrepare
+	post /file/upload/prepare (FileUploadPrepareRequest) returns (FileUploadPrepareResponse)
+	
+	// file upload chunk
+	@handler FileUploadChunk
+	post /file/upload/chunk (FileUploadChunkRequest) returns (FileUploadChunkResponse)
+	
+	// file upload chunk complete
+	@handler FileUploadChunkComplete
+	post /file/upload/chunk/complete (FileUploadChunkCompleteRequest) returns (FileUploadChunkCompleteResponse)
+}
+
+// ----------------------------------------------------------------
+//                      user register
+// ----------------------------------------------------------------
+type UserRegisterRequest {
+	Username string `json:"name"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Code     string `json:"code"`
+}
+
+type UserRegisterResponse {
+}
+
+// ----------------------------------------------------------------
+//                      user login
+// ----------------------------------------------------------------
 
 type LoginRequest {
 	Username string `json:"username"`
@@ -14,14 +101,216 @@ type LoginRequest {
 }
 
 type LoginResponse {
-	Token string `json:"token"`
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
+// ----------------------------------------------------------------
+//                      user detail
+// ----------------------------------------------------------------
 type UserDetailRequest {
 	Identity string `json:"identity"`
 }
 
 type UserDetailResponse {
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
+// ----------------------------------------------------------------
+//                      mail code send
+// ----------------------------------------------------------------
+type MailCodeSendRequest {
+	Email string `json:"email"`
+}
+
+type MailCodeSendResponse {
+}
+
+// ----------------------------------------------------------------
+//                      shared file detail
+// ----------------------------------------------------------------
+type ShareFileDetailRequest {
+	Identity string `json:"identity"`
+}
+type ShareFileDetailResponse {
+	RepositoryIdentity string `json:"repository_identity"`
+	Filename           string `json:"filename"`
+	Fileext            string `json:"fileext"`
+	Filesize           string `json:"filesize"`
+	Filepath           string `json:"filepath"`
+}
+
+// ----------------------------------------------------------------
+//                      user file upload
+// ----------------------------------------------------------------
+type FileUploadRequest {
+	Filehash string `json:"filehash,optional"`
+	Filename string `json:"filename,optional"`
+	Fileext  string `json:"ext,optional"`
+	Filesize int64  `json:"size,optional"`
+	Filepath string `json:"path,optional"`
+}
+
+type FileUploadResponse {
+	Identity string `json:"identity"`
+	Fileext  string `json:"fileext"`
+	Filename string `json:"filename"`
+}
+
+// ----------------------------------------------------------------
+//                      associated storage of user files
+// ----------------------------------------------------------------
+type UserFileStorageRequest {
+	ParentId           int64  `json:"parent_id"`
+	RepositoryIdentity string `json:"repository_identity"`
+	Fileext            string `json:"fileext"`
+	Filename           string `json:"filename"`
+}
+type UserFileStorageResponse {
+}
+
+// ----------------------------------------------------------------
+//                      user files list
+// ----------------------------------------------------------------
+type UserFileListRequest {
+	Id   int64 `json:"id,optional"`
+	Page int64 `json:"page,optional"`
+	Size int64 `json:"size,optional"`
+}
+type UserFileListResponse {
+	List  []*UserFile `json:"list"`
+	Total int64       `json:"total"`
+}
+
+// ----------------------------------------------------------------
+//                      user file
+// ----------------------------------------------------------------
+type UserFile {
+	Id                 int64  `json:"id"`
+	Identity           string `json:"identity"`
+	RepositoryIdentity string `json:"repository_identity"`
+	Filename           string `json:"filename"`
+	Fileext            string `json:"fileext"`
+	Filesize           int64  `json:"filesize"`
+	Filepath           string `json:"filepath"`
+}
+
+// ----------------------------------------------------------------
+//                      user file name update
+// ----------------------------------------------------------------
+type UserFileNameUpdateRequest {
+	Identity string `json:"identity"`
+	Filename string `json:"filename"`
+}
+type UserFileNameUpdateResponse {
+}
+
+// ----------------------------------------------------------------
+//                      user folder create
+// ----------------------------------------------------------------
+
+type UserFolderCreateRequest {
+	Filename string `json:"filename"`
+	ParentId int64  `json:"parent_id"`
+}
+type UserFolderCreateResponse {
+	Identity string `json:"identity"`
+}
+
+// ----------------------------------------------------------------
+//                      user file delete
+// ----------------------------------------------------------------
+type UserFileDeleteRequest {
+	Identity string `json:"identity"`
+}
+type UserFileDeleteResponse {
+}
+
+// ----------------------------------------------------------------
+//                      user file move
+// ----------------------------------------------------------------
+type UserFileMoveRequest {
+	Identity       string `json:"identity"`
+	ParentIdentity string `json:"parent_identity"`
+}
+type UserFileMoveResponse {
+}
+
+// ----------------------------------------------------------------
+//                      share file create
+// ----------------------------------------------------------------
+type ShareFileCreateRequest {
+	UserRepositoryIdentity string `json:"user_repository_identity"`
+	ExpiredTime            int64  `json:"expired_time"`
+}
+type ShareFileCreateResponse {
+	Identity string `json:"identity"`
+}
+
+// ----------------------------------------------------------------
+//                      shared files save
+// ----------------------------------------------------------------
+type SharedFilesSaveRequest {
+	RepositoryIdentity string `json:"repository_identity"`
+	ParentId           int64  `json:"parent_id"`
+}
+type SharedFilesSaveResponse {
+	Identity string `json:"identity"`
+}
+
+// ----------------------------------------------------------------
+//                      refresh Authorization token
+// ----------------------------------------------------------------
+type RefreshAuthTokenRequest {
+}
+type RefreshAuthTokenResponse {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+// ----------------------------------------------------------------
+//                      file upload prepare
+// ----------------------------------------------------------------
+type FileUploadPrepareRequest {
+	Md5      string `json:"md5"`
+	FileName string `json:"filename,optional"`
+	FileExt  string `json:"ext,optional"`
+}
+type FileUploadPrepareResponse {
+	Identity string `json:"identity"`
+	UploadId string `json:"upload_id"`
+	Key      string `json:"key"`
+}
+
+// ----------------------------------------------------------------
+//                      file upload chunk
+// ----------------------------------------------------------------
+type FileUploadChunkRequest {
+	// form data
+	// key
+	// upload id
+	// chunk number
+}
+type FileUploadChunkResponse {
+	Etag string `json:"etag"`
+}
+
+// ----------------------------------------------------------------
+//                      file upload chunk complete
+// ----------------------------------------------------------------
+type FileUploadChunkCompleteRequest {
+	Md5        string      `json:"md5"`
+	Filename   string      `json:"filename"`
+	Fileext    string      `json:"fileext"`
+	Filesize   int64       `json:"filesize"`
+	UploadId   string      `json:"upload_id"`
+	Key        string      `json:"key"`
+	CosObjects []CosObject `json:"cos_objects"`
+}
+type CosObject {
+	Etag        string `json:"etag"`
+	ChunkNumber int64  `json:"chunk_number"`
+}
+type FileUploadChunkCompleteResponse {
 }
