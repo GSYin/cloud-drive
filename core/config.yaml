@@ -1,0 +1,19 @@
+# config file
+
+# AnalyzeToken
+JWT_KEY: "cloud-drive"
+
+# 126 mail token
+MAIL_TOKEN: "Your mail token"
+
+# tencent cloud cos secret id
+COS_SECRET_ID: "your cos secret id"
+
+# tencent cloud cos secret key
+COS_SECRET_KEY: "your cos secret key"
+
+# database config
+MYSQL: user:password@/database?charset=utf8mb4&parseTime=True&loc=Local
+
+# redis config
+RDB: localhost:port
