@@ -55,13 +55,28 @@ func GetDatabaseInfo() string {
 	if err != nil {             // Handle errors reading the config file
 		log.Fatalf("Error reading config file, %s", err)
 	}
-	Database, ok := viper.Get("DATABASE").(string)
+	Database, ok := viper.Get("MYSQL").(string)
 	if !ok {
-		log.Fatalf("can not read DATABASE")
+		log.Fatalf("can not read MYSQL database")
 	}
-
 	return Database
 }
+
+func GetRedisInfo() string {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")    // call multiple times to add many search paths
+	err := viper.ReadInConfig() // Find and read the config file
+	if err != nil {             // Handle errors reading the config file
+		log.Fatalf("Error reading config file, %s", err)
+	}
+	rdb, ok := viper.Get("RDB").(string)
+	if !ok {
+		log.Fatalf("can not read RDB")
+	}
+	return rdb
+}
+
 func GetSentEmailInfo() string {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -70,9 +85,9 @@ func GetSentEmailInfo() string {
 	if err != nil {             // Handle errors reading the config file
 		log.Fatalf("Error reading config file, %s", err)
 	}
-	SentEmailPassword, ok := viper.Get("MAIL_PASSWORD").(string)
+	SentEmailPassword, ok := viper.Get("MAIL_TOKEN").(string)
 	if !ok {
-		log.Fatalf("can not read MAIL_PASSWORD")
+		log.Fatalf("can not read MAIL_TOKEN")
 	}
 
 	return SentEmailPassword
