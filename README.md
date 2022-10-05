@@ -35,3 +35,4 @@ curl -i -X GET http://localhost:8888/user/login
 - **[video course](https://www.bilibili.com/video/BV1cr4y1s7H4?spm=a2c6h.12873639.article-detail.6.a696fc18NZ02N4)**
 - **[api description](https://developer.aliyun.com/article/935464)**
 - **[origin GitHub repositorie](https://github.com/GetcharZp/cloud-disk)**
+- **[api doc](https://www.apifox.cn/apidoc/shared-74bcbbbe-b20f-4ed6-afa8-02752683a8c9/api-20274987)**
